@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sustainable Restaurant Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1"></script>
+    
+    <style>
+        /* CSS for the side navbar */
+        .bullet-endpoint {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: white;
+        font-size: 12px;
+    }
+
+    .left-endpoint {
+        left: 0;
+    }
+
+    .right-endpoint {
+        right: 0;
+    }
+
+    .endpoint-value {
+        font-weight: bold;
+    }
+
+    .endpoint-value {
+        margin-top: 15px;
+    }
+        .bullet-chart {
+        width: 100%;
+        height: 12px;
+        background-color: #f1f1f1;
+        position: relative;
+    }
+
+    .bullet-bar1 {
+        height: 100%;
+        background-color: #4CAF50;
+    }
+    .bullet-bar2 {
+        height: 100%;
+        background-color: rgb(141, 141, 141);
+    }
+
+    .bullet-marker {
+        width: 5px;
+        height: 100%;
+        background-color: #FFC107;
+        position: absolute;
+        left: 70%;
+        top: 0;
+        transform: translate(-50%, -50%);
+    }
+        .sidenav {
+            height: 100%;
+            width: 300px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #181745;
+            overflow-x: hidden;
+            padding-top: 20px;
+            align-items: center;
+        }
+
+        .sidenav a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 20px;
+            color: white;
+            display: block;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+
+        .main {
+            margin-left: 300px; /* Same width as the side navbar */
+            padding: 0px 10px;
+        }
+
+        /* CSS for the tabs */
+        .tab {
+            display: none;
+        }
+
+        /* CSS for the table */
+        table {
+            align-self: center;
+            border-collapse: collapse;
+            margin: 0 auto; /* Automatically centers the container */
+            width: 60%;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+    <div class="sidenav">
+        <h2 style="color: white; margin-left:20px ;">Eco Diner</h2>
+        <br>
+        <br>
+        <a href="{% url 'home'%}" class="active"><i class="fa fa-fw fa-home"></i> Home</a>
+        <br>
+        <a href="{% url 'carbon_footprint' restaurant.pk %}"><i class="fas fa-smog"></i> Carbon Footprint</a>
+        <br>
+        <a href="{% url 'sustainable_menu' restaurant.pk %}"><i class="fas fa-pizza-slice"></i> Sustainable Menu</a>
+        <br>
+        <a href="{% url 'waste_reduction' restaurant.pk %}"><i class="fas fa-trash"></i> Waste Reduction</a>
+        <br>
+        <a href="{% url 'employee_training' restaurant.pk %}"><i class="fas fa-chalkboard-teacher"></i> Employee Training</a>
+    </div>
+    <div class="main">
+        <h1>{{ restaurant }}</h1>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" id="tab1" data-toggle="tab" href="#card-tab1">TODAY</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="tab2" data-toggle="tab" href="#card-tab2">MONTH</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="tab3" data-toggle="tab" href="#card-tab3">YEAR</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="card-tab1" >
+                <div class="row" >
+                    <div class="col-md-6">
+                        <div class="card" >
+                            <!-- Card 1 content -->
+                            <div class="card-header" >
+                                Cost Prediction
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);color:white;">
+                            <canvas id="myChart-pie"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card" style="height: 100%;">
+                            <!-- Card 2 content -->
+                            <div class="card-header" >
+                                Active Appliances
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);color:white;">
+                            <canvas id="myChart-horizontal" height="300"></canvas>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card" style="height: 100%;">
+                            <!-- Card 3 content -->
+                            <div class="card-header" >
+                                Waste Managed
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);">
+                            <canvas id="myChart" height="200"></canvas>
+                            </div>
+                            <br>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card" style="height: 100%;" >
+                            <!-- Card 4 content -->
+                            <div class="card-header" >
+                                Carbon Footprint
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);">
+                                <p style="color: white;">Emission</p>
+                                <br>
+                                <div class="bullet-chart">
+                                    <div class="bullet-bar2" style="width: 4%;"></div>
+                                    <div class="bullet-endpoint left-endpoint">
+                                        
+                                        <div class="endpoint-name">Till Date</div>
+                                        <div class="endpoint-value">1.8kg of CO2</div>
+                                    </div>
+                                    <div class="bullet-endpoint right-endpoint">
+                                        
+                                        <div class="endpoint-name">Predicted</div>
+                                        <div class="endpoint-value">5.6kg of CO2</div>
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <p style="color: white;">Green Energy Generated</p>
+                                <br>
+                                <div class="bullet-chart">
+                                    <div class="bullet-bar1" style="width: 2%;"></div>
+                                    <div class="bullet-endpoint left-endpoint">
+                                        
+                                        <div class="endpoint-name">Till Date</div>
+                                        <div class="endpoint-value">0.73kWh</div>
+                                    </div>
+                                    <div class="bullet-endpoint right-endpoint">
+                                        
+                                        <div class="endpoint-name">Goal</div>
+                                        <div class="endpoint-value">50kWh</div>
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="card-tab2">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <!-- Card 5 content -->
+                            <div class="card-header" >
+                                Cost Prediction
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);color:white;">
+                            <canvas id="myChart-pie2"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card" style="height: 100%;">
+                            <!-- Card 6 content -->
+                            <div class="card-header" >
+                                Active Appliances
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);color:white;">
+                            <canvas id="myChart-horizontal2" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card" style="height: 100%;">
+                            <!-- Card 7 content -->
+                            <div class="card-header" >
+                                Waste Managed
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);color:white;">
+                            <canvas id="myChart2"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card" style="height: 100%;">
+                            <!-- Card 8 content -->
+                            <div class="card-header">
+                                Carbon Footprint
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);">
+                                <p style="color: white;">Emission</p>
+                                <br>
+                                <div class="bullet-chart">
+                                    <div class="bullet-bar2" style="width: 24%;"></div>
+                                    <div class="bullet-endpoint left-endpoint">
+                                        
+                                        <div class="endpoint-name">Till Date</div>
+                                        <div class="endpoint-value">36.4kg of CO2</div>
+                                    </div>
+                                    <div class="bullet-endpoint right-endpoint">
+                                        
+                                        <div class="endpoint-name">Predicted</div>
+                                        <div class="endpoint-value">181.6kg of CO2</div>
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <p style="color: white;">Green Energy Generated</p>
+                                <br>
+                                <div class="bullet-chart">
+                                    <div class="bullet-bar1" style="width: 46%;"></div>
+                                    <div class="bullet-endpoint left-endpoint">
+                                        
+                                        <div class="endpoint-name">Till Date</div>
+                                        <div class="endpoint-value">21.20kWh</div>
+                                    </div>
+                                    <div class="bullet-endpoint right-endpoint">
+                                        
+                                        <div class="endpoint-name">Goal</div>
+                                        <div class="endpoint-value">50kWh</div>
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="card-tab3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <!-- Card 9 content -->
+                            <div class="card-header" >
+                                Cost Prediction
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);color:white;">
+                            <canvas id="myChart-pie3"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card" style="height: 100%;">
+                            <!-- Card 10 content -->
+                            <div class="card-header" >
+                                Active Appliances
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);color:white;">
+                            <canvas id="myChart-horizontal3" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card" style="height: 100%;">
+                            <!-- Card 11 content -->
+                            <div class="card-header" >
+                                Waste Managed
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);color:white;">
+                            <canvas id="myChart3"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card" style="height: 100%;">
+                            <!-- Card 12 content -->
+                            <div class="card-header">
+                                Carbon Footprint
+                            </div>
+                            <div class="card-body" style="background-color: rgb(29, 27, 65);">
+                                <p style="color: white;">Emission</p>
+                                <br>
+                                <div class="bullet-chart">
+                                    <div class="bullet-bar2" style="width: 36%;"></div>
+                                    <div class="bullet-endpoint left-endpoint">
+                                        
+                                        <div class="endpoint-name">Till Date</div>
+                                        <div class="endpoint-value">430.8kg of CO2</div>
+                                    </div>
+                                    <div class="bullet-endpoint right-endpoint">
+                                        
+                                        <div class="endpoint-name">Predicted</div>
+                                        <div class="endpoint-value">2170.6kg of CO2</div>
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                <p style="color: white;">Green Energy Generated</p>
+                                <br>
+                                <div class="bullet-chart">
+                                    <div class="bullet-bar1" style="width: 56%;"></div>
+                                    <div class="bullet-endpoint left-endpoint">
+                                        
+                                        <div class="endpoint-name">Till Date</div>
+                                        <div class="endpoint-value">260kWh</div>
+                                    </div>
+                                    <div class="bullet-endpoint right-endpoint">
+                                        
+                                        <div class="endpoint-name">Goal</div>
+                                        <div class="endpoint-value">600kWh</div>
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Data for the chart (you can pass this from your Django view)
+        var data = {
+            labels: ["0hrs", "1hrs", "2hrs", "3hrs", "4hrs", "5hrs", "6hrs", "7hrs", "8hrs", "9hrs", "10hrs", "11hrs"],
+            datasets: [{
+                label: "Generated Waste",
+                data: [10, 20, 15, 22,10, 19, 15, 21, ],
+                backgroundColor: "rgba(0, 123, 255, 0.5)",
+                borderColor: "rgba(255,255,255)",
+                borderWidth: 1
+            }]
+        };
+        var data2 = {
+            labels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11","12", "13", "14", "15", "16", "17", "18", "19", "20", "21","22", "23","24", "25","26", "27","28", "29","30"],
+            datasets: [{
+                label: "Generated Waste",
+                data: [10, 20, 15, 22,10, 19, 15, 21,10, 20, 15, 22,10, 19, 15, 21,10, 20, 15, 22,10, 19, 15, 21 ],
+                backgroundColor: "rgba(0, 123, 255, 0.5)",
+                borderColor: "rgba(255,255,255)",
+                borderWidth: 1
+            }]
+        };
+        var data3 = {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",],
+            datasets: [{
+                label: "Generated Waste",
+                data: [10, 20, 15, 22,10, 19, ],
+                backgroundColor: "rgba(0, 123, 255, 0.5)",
+                borderColor: "rgba(255,255,255)",
+                borderWidth: 1
+            }]
+        };
+        var data_pie = {
+            labels: ["Electricity", "Gas", ],
+            datasets: [{
+                data: [65,35],
+                backgroundColor:["green", "red"],
+                borderColor: "rgba(255,255,255)",
+                borderWidth: 1
+            }]
+        };
+
+        var data_pie2 = {
+            labels: ["Electricity", "Gas", ],
+            datasets: [{
+                data: [250,100],
+                backgroundColor:["green", "red"],
+                borderColor: "rgba(255,255,255)",
+                borderWidth: 1
+            }]
+        };
+
+        var data_pie3 = {
+            labels: ["Electricity", "Gas", ],
+            datasets: [{
+                data: [1600,600],
+                backgroundColor:["green", "red"],
+                borderColor: "rgba(255,255,255)",
+                borderWidth: 1
+            }]
+        };
+
+        var data_hori = {
+            labels: ["Heating & AC", "EV Charge", "Plug Loads", "Refrigeration", "Lighting", "Others"],
+            datasets: [{
+                label: "Active",
+                data: [24, 20, 15, 12,10,5],
+                backgroundColor: createGradient("violet", "rgba(150,150,150)"),
+                borderColor: "rgba(255,255,255)",
+                borderWidth: 1
+            }]
+        };
+        var data_hori2 = {
+            labels: ["Heating & AC", "EV Charge", "Plug Loads", "Refrigeration", "Lighting", "Others"],
+            datasets: [{
+                label: "Active",
+                data: [24, 20, 15, 12,10,5],
+                backgroundColor: createGradient("violet", "rgba(150,150,150)"),
+                borderColor: "rgba(255,255,255)",
+                borderWidth: 1
+            }]
+        };
+        var data_hori3 = {
+            labels: ["Heating & AC", "EV Charge", "Plug Loads", "Refrigeration", "Lighting", "Others"],
+            datasets: [{
+                label: "Active",
+                data: [24, 20, 15, 12,10,5],
+                backgroundColor: createGradient("violet", "rgba(150,150,150)"),
+                borderColor: "rgba(255,255,255)",
+                borderWidth: 1
+            }]
+        };
+
+        // Create the bar chart
+        var ctx = document.getElementById("myChart").getContext("2d");
+        var myChart = new Chart(ctx, {
+            type: "bar",
+            data: data,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: "white"
+                        },
+                        grid: {
+                            color: "rgba(255, 255, 255, 0.1)" // Set the color of the y-axis grid lines
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: "white" 
+                        },
+                        grid: {
+                            color: "rgba(255, 255, 255, 0.1)" // Set the color of the y-axis grid lines
+                        }
+                    }
+                }
+            }
+        });
+
+        // Create the bar chart
+        var ctx = document.getElementById("myChart2").getContext("2d");
+        var myChart = new Chart(ctx, {
+            type: "bar",
+            data: data2,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: "white"
+                        },
+                        grid: {
+                            color: "rgba(255, 255, 255, 0.1)" // Set the color of the y-axis grid lines
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: "white" 
+                        },
+                        grid: {
+                            color: "rgba(255, 255, 255, 0.1)" // Set the color of the y-axis grid lines
+                        }
+                    }
+                }
+            }
+        });
+
+        // Create the bar chart
+        var ctx = document.getElementById("myChart3").getContext("2d");
+        var myChart = new Chart(ctx, {
+            type: "bar",
+            data: data3,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: "white"
+                        },
+                        grid: {
+                            color: "rgba(255, 255, 255, 0.1)" // Set the color of the y-axis grid lines
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: "white" 
+                        },
+                        grid: {
+                            color: "rgba(255, 255, 255, 0.1)" // Set the color of the y-axis grid lines
+                        }
+                    }
+                }
+            }
+        });
+
+
+         // Create the horizontal bar chart
+         var ctx = document.getElementById("myChart-horizontal").getContext("2d");
+        var myChart = new Chart(ctx, {
+            type: "bar",
+            data: data_hori,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        ticks: {
+                            color: "white" // Set the font color of y-axis ticks to black
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: "white" // Set the font color of x-axis ticks to black
+                        }
+                    },
+                    labels: {
+                    display: false // Disable the legend
+                    },
+                }
+            }
+        });
+        // Create the horizontal bar chart
+        var ctx = document.getElementById("myChart-horizontal2").getContext("2d");
+        var myChart = new Chart(ctx, {
+            type: "bar",
+            data: data_hori2,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        ticks: {
+                            color: "white" // Set the font color of y-axis ticks to black
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: "white" // Set the font color of x-axis ticks to black
+                        }
+                    },
+                    labels: {
+                    display: false // Disable the legend
+                    },
+                }
+            }
+        });
+
+        // Create the horizontal bar chart
+        var ctx = document.getElementById("myChart-horizontal3").getContext("2d");
+        var myChart = new Chart(ctx, {
+            type: "bar",
+            data: data_hori3,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        ticks: {
+                            color: "white" // Set the font color of y-axis ticks to black
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: "white" // Set the font color of x-axis ticks to black
+                        }
+                    },
+                    labels: {
+                    display: false // Disable the legend
+                    },
+                }
+            }
+        });
+
+
+        // Create the chart
+        var ctx = document.getElementById("myChart-pie").getContext("2d");
+        var myChart = new Chart(ctx, {
+            type: "doughnut",
+            data: data_pie,
+            options: {
+                responsive: true,
+            }
+        });
+
+        // Create the chart
+        var ctx = document.getElementById("myChart-pie2").getContext("2d");
+        var myChart = new Chart(ctx, {
+            type: "doughnut",
+            data: data_pie2,
+            options: {
+                responsive: true,
+            }
+        });
+
+        // Create the chart
+        var ctx = document.getElementById("myChart-pie3").getContext("2d");
+        var myChart = new Chart(ctx, {
+            type: "doughnut",
+            data: data_pie3,
+            options: {
+                responsive: true,
+            }
+        });
+
+        // Function to create a gradient fill color
+        function createGradient(color1, color2) {
+            var ctx = document.getElementById("myChart-horizontal").getContext("2d");
+            var gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+            return gradient;
+        }
+    </script>
+</body>
+</html>

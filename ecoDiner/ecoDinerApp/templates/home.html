@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sustainable Restaurant Management System</title>
+</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+    /* CSS for the side navbar */
+    .sidenav {
+        height: 100%;
+        width: 300px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #181745;
+        overflow-x: hidden;
+        padding-top: 20px;
+        align-items: centre;
+    }
+
+    .sidenav a {
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 20px;
+        color: white;
+        display: block;
+    }
+
+    .sidenav a:hover {
+        color: #f1f1f1;
+    }
+
+    .main {
+        margin-left: 300px; /* Same width as the side navbar */
+        padding: 0px 10px;
+        background-color: white;
+        height:100%
+        
+    }
+
+    /* CSS for the tabs */
+    .tab {
+        display: none;
+    }
+
+    /* CSS for the table */
+    table {
+        align-self: center;
+        border-collapse: collapse;
+        margin: 0 auto; /* Automatically centers the container */
+        width: 60%;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #f1f1f1;
+    }
+</style>
+<body>
+    <!-- Side Navbar -->
+    <div class="sidenav">
+        <h2 style="color: white; margin-left:20px ;">Eco Diner</h2>
+        <br>
+        <br>
+        <a href="{% url 'home'%}" class="active"><i class="fa fa-fw fa-home"></i> Home</a>
+    </div>
+
+<div class="main">
+<h1>Restaurant List</h1>
+<table border="1">
+<thead>
+<tr>
+<th>ID</th>
+<th>Restaurant</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+{% for restaurant in restaurants %}
+<tr>
+<td>{{ restaurant.id }} </td>
+<td>{{ restaurant }}</td>
+<td><a href="{% url 'restaurant_detail' restaurant.pk %}">{{ restaurant }}</a></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</body>
+</html>

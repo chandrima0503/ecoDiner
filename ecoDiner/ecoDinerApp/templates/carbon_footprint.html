@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sustainable Restaurant Management System</title>
+</head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1"></script>
+<style>
+    /* CSS for the side navbar */
+    .sidenav {
+        height: 100%;
+        width: 300px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #181745;
+        overflow-x: hidden;
+        padding-top: 20px;
+        align-items: centre;
+    }
+
+    .sidenav a {
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 20px;
+        color: white;
+        display: block;
+    }
+
+    .sidenav a:hover {
+        color: #f1f1f1;
+    }
+
+    .main {
+        margin-left: 300px; /* Same width as the side navbar */
+        padding: 0px 10px;
+        background-color: white;
+        height:100%
+        
+    }
+
+    /* CSS for the tabs */
+    .tab {
+        display: none;
+    }
+
+    /* CSS for the table */
+    table {
+        align-self: center;
+        border-collapse: collapse;
+        margin: 0 auto; /* Automatically centers the container */
+        width: 60%;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #f1f1f1;
+    }
+</style>
+<body>
+<div class="sidenav">
+    <h2 style="color: white; margin-left:20px ;">Eco Diner</h2>
+    <br>
+    <br>
+    <a href="{% url 'home'%}" class="active"><i class="fa fa-fw fa-home"></i> Home</a></li>
+    <br>
+    <a href="{% url 'restaurant_detail' restaurant_carbon_footprint_array.first.restaurant.id %}"><i class="fas fa-utensils"></i> Main Page</a>
+    <br>
+    <a href="{% url 'sustainable_menu' restaurant_carbon_footprint_array.first.restaurant.id %}"><i class="fas fa-pizza-slice"></i> Sustainable Menu</a>
+    <br>
+    <a href="{% url 'waste_reduction' restaurant_carbon_footprint_array.first.restaurant.id %}"><i class="fas fa-trash"></i> Waste Reduction</a>
+    <br>
+    <a href="{% url 'employee_training' restaurant_carbon_footprint_array.first.restaurant.id %}"><i class="fas fa-chalkboard-teacher"></i> Employee Training</a>
+</div>
+<div class="main">
+<h1>{{ restaurant_carbon_footprint_array.first.restaurant }}</h1>
+
+<h2>Carbon Footprint</h2>
+<table border="1">
+    <thead>
+    <tr>
+    <th>ID</th>
+    <th>Energy consumption</th>
+    <th>Water consumption</th>
+    <th>Waste production</th>
+    <th>Date Submitted</th>
+    </tr>
+    </thead>
+    <tbody>
+{% for restaurant_carbon_footprint in restaurant_carbon_footprint_array %}
+<tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ restaurant_carbon_footprint.energy_consumption }}</td>
+    <td>{{ restaurant_carbon_footprint.water_consumption }}</td>
+    <td>{{ restaurant_carbon_footprint.waste_production }}</td>
+    <td>{{ restaurant_carbon_footprint.date_submitted|date:"Y-m-d"  }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<br>
+<br>
+<br>
+
+<div style="color: #181745;"><canvas id="myChart"></canvas></div>
+</div>
+
+<script>
+        // Create the bar chart
+        var ctx = document.getElementById("myChart").getContext("2d");
+        var myChart = new Chart(ctx, {
+        data: {
+            datasets: [{
+                type: 'bar',
+                label: 'Yearly carbon generated',
+                data: [5000, 4500, 4000, 3500, 3100, 2700 , 2550, 2450 ,2400, 2370, 2170.6 ],
+                backgroundColor: createGradient("blue", "rgb(137, 207, 240)"),
+                borderColor: "rgba(0,0,0)"
+            }, {
+                type: 'line',
+                label: 'Trend line',
+                data: [5000, 4500, 4000, 3500, 3100, 2700 , 2550, 2450 ,2400, 2370, 2170.6 ],
+                backgroundColor: "rgba(0, 0, 0, 2)",
+                borderColor: "rgba(0,0,0)",
+                zIndex: 1
+            }],
+            labels: ["2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"]
+        },
+        options: {
+            label:{
+                display: false
+            }
+        }
+});
+// Function to create a gradient fill color
+function createGradient(color1, color2) {
+            var ctx = document.getElementById("myChart").getContext("2d");
+            var gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+            gradient.addColorStop(0, color1);
+            gradient.addColorStop(1, color2);
+            return gradient;
+        }
+</script>
+
+</body>
+</html>

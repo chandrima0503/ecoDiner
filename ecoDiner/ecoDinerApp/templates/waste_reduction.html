@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sustainable Restaurant Management System</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<style>
+    /* CSS for the side navbar */
+    .sidenav {
+        height: 100%;
+        width: 300px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #181745;
+        overflow-x: hidden;
+        padding-top: 20px;
+        align-items: centre;
+    }
+
+    .sidenav a {
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 20px;
+        color: white;
+        display: block;
+    }
+
+    .sidenav a:hover {
+        color: #f1f1f1;
+    }
+
+    .main {
+        margin-left: 300px; /* Same width as the side navbar */
+        padding: 0px 10px;
+        background-color: white;
+        height:100%
+        
+    }
+
+    /* CSS for the tabs */
+    .tab {
+        display: none;
+    }
+
+    /* CSS for the table */
+    table {
+        align-self: center;
+        border-collapse: collapse;
+        margin: 0 auto; /* Automatically centers the container */
+        width: 60%;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #f1f1f1;
+    }
+</style>
+<body>
+    <div class="sidenav">
+        <h2 style="color: white; margin-left:20px ;">Eco Diner</h2>
+        <br>
+        <br>
+        <a href="{% url 'home'%}" class="active"><i class="fa fa-fw fa-home"></i> Home</a>
+        <br>
+        <a href="{% url 'restaurant_detail' restaurant_waste_reduction.restaurant.id %}"><i class="fas fa-utensils"></i> Main Page</a>
+        <br>
+        <a href="{% url 'carbon_footprint' restaurant_waste_reduction.restaurant.id %}"><i class="fas fa-smog"></i> Carbon Footprint</a>
+        <br>
+        <a href="{% url 'sustainable_menu' restaurant_waste_reduction.restaurant.id  %}"><i class="fas fa-pizza-slice"></i> Sustainable Menu</a>
+        <br>
+        <a href="{% url 'employee_training' restaurant_waste_reduction.restaurant.id  %}"><i class="fas fa-chalkboard-teacher"></i> Employee Training</a>
+        </div>
+        <div class="main">
+<h1>{{ restaurant_waste_reduction.restaurant }}</h1>
+
+<h2>Waste Reduction </h2>
+<h3>Waste management: </h3>
+<li>{{ restaurant_waste_reduction.waste_management }}</li>
+<h3>Inventory Checklist </h3>
+{% for item in inventory %}
+<input type="checkbox" name="item" id="item-{{ item.id }}" value="{{ item.id }}">
+<label for="item-{{ item.id }}">{{ item }}</label>
+<br>
+{% endfor %}
+</div>
+</body>
+</html>
